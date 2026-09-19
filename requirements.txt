@@ -7,3 +7,4 @@ jwt
 psycopg2
 pydantic[email]
 fastapi-mail
+PyJWT==2.10.1
