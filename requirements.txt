@@ -1,0 +1,10 @@
+fastapi[standard]
+uvicorn
+sqlalchemy
+dotenv
+pyjwt
+argon2-cffi
+psycopg2
+fastapi_mail
+httpx
+authlib
