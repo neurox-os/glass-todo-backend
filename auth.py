@@ -158,13 +158,13 @@ async def create_account(
             verification_code
         )
 
-    except Exception:
+    except Exception as e:
         db.delete(new_user)
         db.commit()
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Could not send verification email"
+            detail=f"Could not send verification email {e}"
         )
 
     return {
