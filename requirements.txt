@@ -1,0 +1,9 @@
+fastapi[standard]
+uvicorn 
+argon2-cffi
+sqlalchemy
+dotenv
+jwt
+psycopg2
+pydantic[email]
+fastapi-mail
