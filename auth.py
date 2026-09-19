@@ -21,7 +21,7 @@ import jwt
 import secrets
 import os
 
-from jwt.exceptions import PyJWTError
+from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timedelta, timezone
 
 
@@ -352,7 +352,7 @@ async def refresh_token(
                 detail="Invalid refresh token"
             )
 
-    except PyJWTError:
+    except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired refresh token"
@@ -452,7 +452,7 @@ def get_current_user(
                 headers={"WWW-Authenticate": "Bearer"}
             )
 
-    except PyJWTError:
+    except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
@@ -625,7 +625,7 @@ async def reset_password(
                 detail="Invalid reset token"
             )
 
-    except PyJWTError:
+    except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired reset token"
