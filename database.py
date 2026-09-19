@@ -8,18 +8,18 @@ load_dotenv()
 db_url = os.getenv("DATABASE_URL")
 
 if not db_url:
-    raise RuntimeError("DATABASE_URL is not configured")
+    raise RuntimeError("DATABASE_URL is not configured")
 
 engine = create_engine(url=db_url)
 
 SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
 class Base(DeclarativeBase):
-  pass 
+  pass 
 
 def get_db():
-  db = SessionLocal()
-  try:
-    yield db
-  finally:
-    db.close()
+  db = SessionLocal()
+  try:
+    yield db
+  finally:
+    db.close() this is database .py file
