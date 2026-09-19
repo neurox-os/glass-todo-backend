@@ -1,28 +1,35 @@
 import os
 
-import resend
 from dotenv import load_dotenv
+
+from fastapi_mail import (
+    ConnectionConfig,
+    FastMail,
+    MessageSchema,
+    MessageType
+)
 
 load_dotenv()
 
-resend_api_key = os.getenv("RESEND_API_KEY")
-mail_from = os.getenv("MAIL_FROM")
 
-missing_vars = [
-    var
-    for var, val in {
-        "RESEND_API_KEY": resend_api_key,
-        "MAIL_FROM": mail_from,
-    }.items()
-    if not val
-]
+mail_config = ConnectionConfig(
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+    MAIL_FROM=os.getenv("MAIL_FROM"),
+    MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME"),
 
-if missing_vars:
-    raise RuntimeError(
-        f"Missing required email configuration: {', '.join(missing_vars)}"
-    )
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_PORT=587,
 
-resend.api_key = resend_api_key
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True,
+)
+
+
+fm = FastMail(mail_config)
 
 
 async def send_verification_email(
@@ -30,11 +37,10 @@ async def send_verification_email(
     verification_code: str
 ) -> None:
 
-    params = {
-        "from": mail_from,
-        "to": [email],
-        "subject": "Verify your email",
-        "html": f"""
+    message = MessageSchema(
+        subject="Verify your email",
+        recipients=[email],
+        body=f"""
         <html>
             <body>
                 <h2>Verify your email address</h2>
@@ -58,10 +64,11 @@ async def send_verification_email(
                 </p>
             </body>
         </html>
-        """
-    }
+        """,
+        subtype=MessageType.html
+    )
 
-    resend.Emails.send(params)
+    await fm.send_message(message)
 
 
 async def send_reset_email(
@@ -69,14 +76,13 @@ async def send_reset_email(
     reset_code: str
 ) -> None:
 
-    params = {
-        "from": mail_from,
-        "to": [email],
-        "subject": "Reset your password",
-        "html": f"""
+    message = MessageSchema(
+        subject="Reset your password",
+        recipients=[email],
+        body=f"""
         <html>
             <body>
-                <h2>Password reset request</h2>
+                <h2>Password Reset Request</h2>
 
                 <p>Your password reset code is:</p>
 
@@ -95,7 +101,8 @@ async def send_reset_email(
                 </p>
             </body>
         </html>
-        """
-    }
+        """,
+        subtype=MessageType.html
+    )
 
-    resend.Emails.send(params)
+    await fm.send_message(message)
